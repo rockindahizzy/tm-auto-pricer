@@ -5,13 +5,13 @@ import './App.css';
 import {getItemNameFromUrl} from './utils';
 
 const App = () => {
-
+  const priceMarginStore = localStorage.getItem('PRICE_MARGIN');
   const [runPricer, setRunPricer] = useState(false);
   const [shopItems, setShopItems] = useState([]);
   const [itemsRetrieved, setItemsRetrieved] = useState(false);
   const [totalCompleted, setTotalCompleted] = useState(0);
   const [fairyQuestPending, setFairyQuestPending] = useState(false);
-  const [priceMargin, setPriceMargin] = useState();
+  const [priceMargin, setPriceMargin] = useState(priceMarginStore || null);
   const [priceMarginUnit, setPriceMarginUnit] = useState('NP');
 
   localStorage.setItem('MESSAGE', 'This is super secret');
@@ -23,6 +23,7 @@ const App = () => {
 
   useEffect(async () => {
     if(runPricer) {
+      setTotalCompleted(0);
       for(let i = 0; i < shopItems.length; i++) {
         await _searchItem(i);
       }
@@ -72,7 +73,6 @@ const App = () => {
       }
     });
     setRunPricer(false);
-    setTotalCompleted(0);
   };
 
   return (
@@ -88,7 +88,15 @@ const App = () => {
               setRunPricer(true);
             }}>
             <div style={styles.formGroup}>
-              <input type="number" value={priceMargin} placeholder="Enter Whole Number"  onChange={(e) => {setPriceMargin(parseInt(e.target.value));}} />
+              <input
+                type="number"
+                value={priceMargin}
+                placeholder="Enter Whole Number"
+                onChange={(e) => {
+                  setPriceMargin(parseInt(e.target.value));
+                  localStorage.setItem('PRICE_MARGIN', parseInt(e.target.value));
+                }}
+              />
               <select
                 value={priceMarginUnit}
                 onChange={(e) => setPriceMarginUnit(e.target.value)}
@@ -100,8 +108,11 @@ const App = () => {
             </div>
             <input type="submit" value="Run Auto Pricer" style={{ width: '50%'}}/>
           </form>
-          { runPricer && (
+          { runPricer && totalCompleted !== shopItems.length && (
             <progress value={totalCompleted / shopItems.length}/>
+          )}
+          { !runPricer && totalCompleted === shopItems.length && (
+            <h4>Done!</h4>
           )}
         </>
       )}
