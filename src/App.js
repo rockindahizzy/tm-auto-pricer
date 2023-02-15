@@ -11,7 +11,7 @@ const App = () => {
   const [itemsRetrieved, setItemsRetrieved] = useState(false);
   const [totalCompleted, setTotalCompleted] = useState(0);
   const [fairyQuestPending, setFairyQuestPending] = useState(false);
-  const [priceMargin, setPriceMargin] = useState(priceMarginStore || null);
+  const [priceMargin, setPriceMargin] = useState(parseInt(priceMarginStore) || null);
   const [priceMarginUnit, setPriceMarginUnit] = useState('NP');
 
   localStorage.setItem('MESSAGE', 'This is super secret');
@@ -21,6 +21,7 @@ const App = () => {
     setItemsRetrieved(items.length > 0);
   }, []);
 
+  /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(async () => {
     if(runPricer) {
       setTotalCompleted(0);
@@ -30,6 +31,7 @@ const App = () => {
       updateItems();
     }
   }, [runPricer]);
+  /* eslint-enable */
 
   const _searchItem = async (i) => {
     try {
@@ -94,7 +96,7 @@ const App = () => {
                 placeholder="Enter Whole Number"
                 onChange={(e) => {
                   setPriceMargin(parseInt(e.target.value));
-                  localStorage.setItem('PRICE_MARGIN', parseInt(e.target.value));
+                  localStorage.setItem('PRICE_MARGIN', e.target.value);
                 }}
               />
               <select
@@ -108,10 +110,10 @@ const App = () => {
             </div>
             <input type="submit" value="Run Auto Pricer" style={{ width: '50%'}}/>
           </form>
-          { runPricer && totalCompleted !== shopItems.length && (
+          { runPricer && (
             <progress value={totalCompleted / shopItems.length}/>
           )}
-          { !runPricer && totalCompleted === shopItems.length && (
+          { !runPricer && totalCompleted > 0 && (
             <h4>Done!</h4>
           )}
         </>
