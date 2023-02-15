@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Auto Pricer
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.2
 // @description  Views your shop and prices items
 // @author       rr
 // @match        https://www.grundos.cafe/market/*
